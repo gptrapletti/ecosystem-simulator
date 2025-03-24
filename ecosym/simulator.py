@@ -57,7 +57,7 @@ class Simulator:
         for position, entity in self.world.layers[1].items(): # TODO: deal with different layers
             pygame.draw.rect(
                 surface=self.arena, 
-                color=(0, 255, 0), # TODO use color from entity
+                color=entity.color,
                 rect=(position.x, position.y, 1, 1) 
             )
         scaled_arena = pygame.transform.scale(self.arena, self.screen.get_size())

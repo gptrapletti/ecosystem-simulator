@@ -1,6 +1,8 @@
 from collections import defaultdict
 import random
+from typing import List
 
+from ecosym.entities.entities import Agent
 from ecosym.domain.position import Position
 from ecosym.utils import shuffle_list
 
@@ -17,7 +19,7 @@ class World:
         }
         
     def next_epoch(self) -> None:
-        for layer_num, layer_dict in self.layers.items():
+        for _, layer_dict in self.layers.items():
             entities = list(layer_dict.values())
             shuffle_list(entities)
             
@@ -25,18 +27,25 @@ class World:
                 entity.act(world=self)
         
         
-    def add(self, entity, layer: int, position: Position) -> None:
+    def add(self, agent: Agent, position: Position) -> None: # NOTE: missing tipyng
         """
         Add entity to world.
         """
         if position.x >= self.size or position.y >= self.size:
             raise ValueError("Position coordinates beyond world ends.")
         
-        if not self._position_is_free(layer=layer, position=position):
+        if not self._position_is_free(layer=agent.layer, position=position):
             raise ValueError("Position already occupied.")
         
-        self.layers[layer][position] = entity
+        self.layers[agent.layer][position] = agent
 
     
     def _position_is_free(self, layer: int, position: Position) -> bool:
         return False if self.layers[layer].get(position) else True
+    
+    def spawn(self, agents: List[Agent]) -> None:
+        for agent in agents:
+            self.add(agent=agent, position=agent.position)
+
+        
+        
